@@ -1,11 +1,12 @@
 FROM alpine:latest AS build
 
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk
+RUN apk update
+RUN apk add install openjdk-17-jdk
 COPY . .
-RUN ./gradlew bootJar --no-daemon
+RUN chmod +x ./gradlew bootJar --no-daemon
 
 FROM openjdk:17-alpine
 EXPOSE 8080
-COPY ./build/libs/API-REST-con-Gradle-0.0.1-SNAPSHOT.jar ./app.jar
+#COPY ./build/libs/API-REST-con-Gradle-0.0.1-SNAPSHOT.jar ./app.jar
+COPY --from=build ./build/libs/API-REST-con-Gradle-0.0.1-SNAPSHOT.jar ./app.jar
 ENTRYPOINT ["java", "-jar" , "app.jar"]
